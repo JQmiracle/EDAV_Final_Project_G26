@@ -4,18 +4,18 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Chapter 2 Proposal | A Study of Manufacturing Quality Exception/Reject Data and the Patterns Behind of a Food Packaging Manufacturer</title>
-  <meta name="description" content="Chapter 2 Proposal | A Study of Manufacturing Quality Exception/Reject Data and the Patterns Behind of a Food Packaging Manufacturer" />
+  <title>Chapter 2 Proposal | A Study of Manufacturing Quality Exception Data and the Patterns Behind of a Food Packaging Manufacturer</title>
+  <meta name="description" content="Chapter 2 Proposal | A Study of Manufacturing Quality Exception Data and the Patterns Behind of a Food Packaging Manufacturer" />
   <meta name="generator" content="bookdown 0.29 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Chapter 2 Proposal | A Study of Manufacturing Quality Exception/Reject Data and the Patterns Behind of a Food Packaging Manufacturer" />
+  <meta property="og:title" content="Chapter 2 Proposal | A Study of Manufacturing Quality Exception Data and the Patterns Behind of a Food Packaging Manufacturer" />
   <meta property="og:type" content="book" />
   
   
   
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Chapter 2 Proposal | A Study of Manufacturing Quality Exception/Reject Data and the Patterns Behind of a Food Packaging Manufacturer" />
+  <meta name="twitter:title" content="Chapter 2 Proposal | A Study of Manufacturing Quality Exception Data and the Patterns Behind of a Food Packaging Manufacturer" />
   
   
   
@@ -23,7 +23,7 @@
 <meta name="author" content="Ji Qi, Xingye Feng" />
 
 
-<meta name="date" content="2022-10-30" />
+<meta name="date" content="2022-11-01" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -98,7 +98,7 @@
       <div class="body-inner">
         <div class="book-header" role="navigation">
           <h1>
-            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">A Study of Manufacturing Quality Exception/Reject Data and the Patterns Behind of a Food Packaging Manufacturer</a>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">A Study of Manufacturing Quality Exception Data and the Patterns Behind of a Food Packaging Manufacturer</a>
           </h1>
         </div>
 
@@ -110,9 +110,18 @@
 <h1><span class="header-section-number">Chapter 2</span> Proposal<a href="proposal.html#proposal" class="anchor-section" aria-label="Anchor link to header"></a></h1>
 <div id="research-topic" class="section level2 hasAnchor" number="2.1">
 <h2><span class="header-section-number">2.1</span> Research topic<a href="proposal.html#research-topic" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Our research topic is: A Study of Manufacturing Quality Exception Data and the Patterns Behind of a Food Packaging Manufacturer. We are interested in this topic because it is a real-world application of exploratory data visualization/analyze which can solve real puzzles that the company has. In the food packaging manufacturing industry, there are tens of thousands of pounds of finished good rejected due to quality defect in a single manufacturing plant every day. In the meantime, there are thousands of quality inspection data points generated in a single plant each day. If those data are simply collected but not analyzed, they have no value on process improvement or efficiency enhancement. Thus, through our project, we would like to provide a value-added study by analyzing the Quality Exception data and eventually lead the way to optimization and improvement for the manufacturing plant. To give an example, among all the production lines and hundreds of products produced each day, which feature of which product need special focus to improve its pack out efficiency (meaning to have less reject)? What are the inspection features that are strongly related to each other so they can be reviewed together for quality improvement?</p>
 </div>
 <div id="data-availability" class="section level2 hasAnchor" number="2.2">
 <h2><span class="header-section-number">2.2</span> Data availability<a href="proposal.html#data-availability" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Our data are all sourced from Sabert Corporation, a leading food packaging manufacturing company. We are interested in the manufacturing Quality Exception data in the New Jersey plant. The data will be provided directly by its Quality Assurance department. Group member Xingye works there and is responsible of collecting the data. Since the data is not public, there is no direct link to the data source. However, it will be downloaded by Xingye from Sabert’s Intranet database.</p>
+<p>Sabert uses a Statistical Process Control system for Quality Inspection data collection. All Quality Inspection data are stored on a general database. We are interested in the Exception data specifically of all data, which can be exported as a .csv file from the general data base. We plan to import the .csv data into R and perform data visualization and analysis.</p>
+<p>The Quality Inspection data we are interested is collected by Quality Inspectors at Sabert New Jersey plant, on a 12-hour shift, entered real-time. The plant has 13 manufacturing lines, Quality Inspectors enter inspection data two to three times each shift for each line. The system generates an automatic report of the Exception data every 24 hour. We will study the data for the past 6 months, which is a reasonable time frame in manufacturing to identify long term issue and analyze patterns.</p>
+<p>In order the import the data, we need to determine the date range we are interested in, export all exception data in a .csv file, and open in R to start analyzing.</p>
+<p>If we have question about the data, we will contact the Quality Manager at Sabert New Jersey plant directly to get an understanding and address the questions.</p>
+<p>Since it is a manufacturing data set, we expect that it will require data cleaning, duplicate dropping, outlier excluding in some extent. We will study and sanitize the data set first before starting the analyzation.</p>
+<p><strong>Sources:</strong>
+[Sabert Corporation Website] (<a href="https://sabert.com/" class="uri">https://sabert.com/</a>)</p>
 
 </div>
 </div>
