@@ -1,5 +1,5 @@
 --- 
-title: "A Study of Manufacturing Quality Exception/Reject Data and the Patterns Behind of a Food Packaging Manufacturer"
+title: "A Study of Manufacturing Quality Exception Data and the Patterns Behind of a Food Packaging Manufacturer"
 author: "Ji Qi, Xingye Feng "
 date: "`r Sys.Date()`"
 site: bookdown::bookdown_site
