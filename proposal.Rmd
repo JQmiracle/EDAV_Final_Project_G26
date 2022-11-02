@@ -12,7 +12,9 @@ Sabert uses a Statistical Process Control system for Quality Inspection data col
 
 The Quality Inspection data we are interested is collected by Quality Inspectors at Sabert New Jersey plant, on a 12-hour shift, entered real-time. The plant has 13 manufacturing lines, Quality Inspectors enter inspection data two to three times each shift for each line. The system generates an automatic report of the Exception data every 24 hour. We will study the data for the past 6 months, which is a reasonable time frame in manufacturing to identify long term issue and analyze patterns. 
 
-In order the import the data, we need to determine the date range we are interested in, export all exception data in a .csv file, and open in R to start analyzing.
+The Quality Inspection data includes the numerical and categorical data. For example, numerical data includes weight, wall thickness, color index etc. Categorical data results are pass or fail which includes visual inspection, form inspection, perforation inspection etc. We will study the data through visualization and find recommendation models that reduce exception rate. 
+
+In order to import the data, we need to determine the date range we are interested in, export all exception data in a .csv file, and open in R to start analyzing.
 
 If we have question about the data, we will contact the Quality Manager at Sabert New Jersey plant directly to get an understanding and address the questions.
 
