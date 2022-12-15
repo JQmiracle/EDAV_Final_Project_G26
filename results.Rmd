@@ -2,15 +2,16 @@
 
 ## Required Libraries
 ```{r}
-library(dplyr,  warn.conflicts = FALSE)
+library(dplyr, warn.conflicts = FALSE)
+library(gridExtra, warn.conflicts = FALSE)
+library(ggridges, warn.conflicts = FALSE)
+library(forcats, warn.conflicts = FALSE)
+library(GGally, warn.conflicts = FALSE)
 library(ggplot2)
 library(RColorBrewer)
 library(lubridate)
-library(forcats,warn.conflicts = FALSE)
 library(grid)
 library(lattice)
-library(gridExtra, warn.conflicts = FALSE)
-library(ggridges,  warn.conflicts = FALSE)
 ```
 
 
@@ -67,27 +68,165 @@ p4
 ```{r}
 dfn_weight <- dplyr::filter(dfn_variable, MIC_Desc =="Part Weight")
 dfn_weight <- within(dfn_weight, weight_diff <- (Result - Target)/Target )
-
-ggplot(dfn_weight, aes(x = weight_diff, y = WorkcenterDesc)) +
+p5 <- ggplot(dfn_weight, aes(x = weight_diff, y = WorkcenterDesc)) +
   geom_density_ridges(fill = "blue") +
   ggtitle("Part Weight Result") +
   ylab("Machine")
 
+p5
 
 ```
 ## Multiple boxplots of Part Weight Result according to WorkcenterDesc Type
 ```{r}
 dfn_variable  %>% 
-  filter(MIC_Desc == 'Part Weight')  %>%
-ggplot(aes(x=reorder(WorkcenterDesc, Result, median),y=Result)) +
+  filter(MIC_Desc == 'Part Weight')  
+
+p6 <- dfn_variable  %>% 
+  filter(MIC_Desc == 'Part Weight') %>% 
+  ggplot(aes(x=reorder(WorkcenterDesc, Result, median),y=Result)) +
   geom_boxplot() +
   coord_flip() +
   ggtitle("Multiple boxplots of Part Weight Result according to WorkcenterDesc Type") +
   labs(x="Part Weight", y="WorkcenterDesc Type")
 
+p6
 ```
+
+## Parallel coordinate plot: count(partweight)  vs count(wall thickness)  vs count(silicone ratio)  + count(all) every line summary
+
+
+
+
+
+
+
+
+
+
+
+
+
 ## Pick machine I4 and I7 to study because they have most exceptions.
+
 ### Study Machine I4
+
+
+
+```{r}
+dfn_attribute4 <- dplyr::filter(dfn_attribute, WorkcenterDesc=="I4") #filter by machine I4
+dfn_variable4 <- dplyr::filter(dfn_variable, WorkcenterDesc=="I4") #filter by machine I4
+
+p7 <- dfn_variable4%>%   
+  group_by(MIC_Desc) %>% 
+  tally()  %>% 
+  ggplot(aes(x = fct_reorder(MIC_Desc, n, .desc = FALSE), y = n))+
+  geom_bar(stat="identity")+
+  labs(x = "MIC_Desc", y = "Freq", title = "Variables")+
+  coord_flip()
+
+p8 <- dfn_attribute4%>%   
+  group_by(MIC_Desc) %>% 
+  tally()  %>% 
+  ggplot(aes(x = fct_reorder(MIC_Desc, n, .desc = FALSE), y = n))+
+  geom_bar(stat="identity")+
+  labs(x = "MIC_Desc", y = "Freq", title = "Attributes")+
+  coord_flip()
+
+
+grid.arrange(p7, p8, nrow = 2)
+```
+
+
+### Study Machine I7
+
+```{r}
+dfn_attribute7 <- dplyr::filter(dfn_attribute, WorkcenterDesc=="I7") #filter by machine I7
+dfn_variable7 <- dplyr::filter(dfn_variable, WorkcenterDesc=="I7") #filter by machine I7
+
+p9 <- dfn_variable7%>%   
+  group_by(MIC_Desc) %>% 
+  tally()  %>% 
+  ggplot(aes(x = fct_reorder(MIC_Desc, n, .desc = FALSE), y = n))+
+  geom_bar(stat="identity")+
+  labs(x = "MIC_Desc", y = "Freq", title = "Variables")+
+  coord_flip()
+
+p10 <- dfn_attribute7%>%   
+  group_by(MIC_Desc) %>% 
+  tally()  %>% 
+  ggplot(aes(x = fct_reorder(MIC_Desc, n, .desc = FALSE), y = n))+
+  geom_bar(stat="identity")+
+  labs(x = "MIC_Desc", y = "Freq", title = "Attributes")+
+  coord_flip()
+
+
+grid.arrange(p9, p10, nrow = 2)
+```
+
+
+
+
+### Time series plot of attribute exception throughout the 3 months. For I4 and I7 repectively.  (overall + by week) 
+
+```{r}
+var4_time <- dfn_variable4 %>%
+  filter(MIC_Desc == 'Part Weight')%>%  
+  mutate(Date = as.Date(PostingDate, "%m/%d/%Y"))%>%  
+  mutate(ResultDiff = (Result - Target)/Target)%>%
+  group_by(Date)%>%
+  summarize(MeanRetDiff = mean(ResultDiff))
+
+
+g <- ggplot(var4_time,aes(Date, MeanRetDiff)) +
+  geom_line(alpha = 1) +
+  ggtitle("Part Weight of I4") +  labs (x = "Date", y = "Result") +
+  theme_grey(16) +
+  theme(legend.title = element_blank())
+
+weekend <- var4_time %>% filter(wday(Date) == 6) 
+
+p11 <- g+geom_point(data = weekend, aes(Date, MeanRetDiff), color = "deeppink")
+
+p11
+```
+
+```{r}
+p12 <- ggplot(var4_time, aes(Date, MeanRetDiff)) +  
+    geom_line(color = "grey30") + geom_point(size = 1) +  
+    facet_grid(.~wday(Date, label = TRUE)) +  
+    geom_smooth(se = FALSE)
+```
+```{r}
+var7_time <- dfn_variable7 %>%
+  filter(MIC_Desc == 'Part Weight')%>%  
+  mutate(Date = as.Date(PostingDate, "%m/%d/%Y"))%>%  
+  mutate(ResultDiff = (Result - Target)/Target)%>%
+  group_by(Date)%>%
+  summarize(MeanRetDiff = mean(ResultDiff))
+
+
+g <- ggplot(var7_time,aes(Date, MeanRetDiff)) +
+  geom_line(alpha = 1) +
+  ggtitle("Part Weight of I7") +  labs (x = "Date", y = "Result") +
+  theme_grey(16) +
+  theme(legend.title = element_blank())
+
+weekend <- var7_time %>% filter(wday(Date) == 6 ) 
+
+p13 <- g+geom_point(data = weekend, aes(Date, MeanRetDiff), color = "deeppink")
+p13
+```
+
+```{r}
+p14 <- ggplot(var7_time, aes(Date, MeanRetDiff)) +  
+    geom_line(color = "grey30") + geom_point(size = 1) +  
+    facet_grid(.~wday(Date, label = TRUE)) +  
+    geom_smooth(se = FALSE)
+
+p14
+```
+
+
 
 
 
