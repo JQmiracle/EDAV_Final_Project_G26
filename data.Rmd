@@ -2,7 +2,26 @@
 
 ## Sources
 
+
+
 ## Cleaning / transformation
+```{r}
+Exception_data <- read.csv(file = 'Sep-Nov.22.csv')
+dfn <- Exception_data[!duplicated(Exception_data[c("MIC_Desc","Result","PostingDate")]),] #drop duplicate attributes
+dfn <- dplyr::filter(dfn, MIC_Desc!="Box ID Check")
+dfn <- dplyr::filter(dfn, MIC_Desc!="Bag ID Check")
+
+dfn_attribute <- dplyr::filter(dfn, Result=="Reject") #filter by attribute datatype
+dfn_variable <- dplyr::filter(dfn, Result !="Reject") #filter by variable datatype
+dfn_variable$'Result' <- as.numeric(dfn_variable$'Result')
+dfn_variable$'Target' <- as.numeric(dfn_variable$'Target')
+dfn
+```
+
 
 ## Missing value analysis
+
+
+
+
 

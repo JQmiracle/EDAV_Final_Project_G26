@@ -7,5 +7,13 @@ sources
 cleaning-transformation
 missing-value-analysis
 results
+required-libraries
+bar-chart-for-all-machines-to-identify-the-top-2-machines-with-the-most-defect-items
+ridgeline-plot-for-part-weight-exception-for-each-line-use-weight-difference-result---targettarget.
+parallel-coordinate-plot-countpartweight-vs-countwall-thickness-vs-countsilicone-ratio-countall-every-line-summary
+pick-machine-i4-and-i7-to-study-because-they-have-most-exceptions.
+study-machine-i4
+study-machine-i7
+time-series-plot-of-attribute-exception-throughout-the-3-months.-for-i4-and-i7-repectively.-overall-by-week
 interactive-component
 conclusion
