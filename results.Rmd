@@ -1,1 +1,93 @@
 # Results
+
+## Required Libraries
+```{r}
+library(dplyr,  warn.conflicts = FALSE)
+library(ggplot2)
+library(RColorBrewer)
+library(lubridate)
+library(forcats,warn.conflicts = FALSE)
+library(grid)
+library(lattice)
+library(gridExtra, warn.conflicts = FALSE)
+library(ggridges,  warn.conflicts = FALSE)
+```
+
+
+## Bar Chart for All Machines to identify the top 2 machines with the most defect items
+```{r}
+p1 <- dfn_variable%>%   
+  group_by(WorkcenterDesc) %>% 
+  tally()  %>% 
+  ggplot(aes(x = fct_reorder(WorkcenterDesc, n, .desc = TRUE), y = n))+
+  geom_bar(stat="identity")+
+  labs(x = "WorkcenterDesc", y = "Freq", title = "Variables")
+
+p2 <- dfn_attribute%>%   
+  group_by(WorkcenterDesc) %>% 
+  tally()  %>% 
+  ggplot(aes(x = fct_reorder(WorkcenterDesc, n, .desc = TRUE), y = n))+
+  geom_bar(stat="identity")+
+  labs(x = "WorkcenterDesc", y = "Freq", title = "Attributes")
+
+
+grid.arrange(p1, p2, ncol = 2)
+```
+## Group bar chart to identify the top attribute and varibales Among all machines
+```{r}
+p3<- dfn_attribute %>%   
+  group_by(WorkcenterDesc, MIC_Desc) %>% 
+  count(Result)%>% 
+  group_by(WorkcenterDesc) %>% 
+  mutate(Proportion = `n` / sum(n)) %>% 
+  ggplot(aes(x = fct_reorder2(WorkcenterDesc, MIC_Desc, Proportion, .desc = FALSE), y = Proportion, fill = MIC_Desc))+
+  geom_bar(position="fill", stat="identity")+
+    labs(x = "WorkcenterDesc", y = "Proportion", title = "Top Attribute for each machine")+
+    coord_flip()+
+scale_fill_brewer(palette="Paired")
+
+
+p4<-dfn_variable %>%   
+  group_by(WorkcenterDesc, MIC_Desc) %>% 
+  tally()%>% 
+  group_by(WorkcenterDesc) %>% 
+  mutate(Proportion = `n` / sum(n)) %>% 
+  ggplot(aes(x = fct_reorder2(WorkcenterDesc, MIC_Desc, Proportion, .desc = TRUE), y = Proportion, fill = MIC_Desc))+
+  geom_bar(position="fill", stat="identity")+
+    labs(x = "WorkcenterDesc", y = "Proportion", title = "Top Variables for each machine")+
+    coord_flip()+
+scale_fill_brewer(palette="Paired")
+
+p3
+p4
+```
+
+
+## Ridgeline plot for part weight exception for each line: use weight difference = (result - target)/target.
+```{r}
+dfn_weight <- dplyr::filter(dfn_variable, MIC_Desc =="Part Weight")
+dfn_weight <- within(dfn_weight, weight_diff <- (Result - Target)/Target )
+
+ggplot(dfn_weight, aes(x = weight_diff, y = WorkcenterDesc)) +
+  geom_density_ridges(fill = "blue") +
+  ggtitle("Part Weight Result") +
+  ylab("Machine")
+
+
+```
+## Multiple boxplots of Part Weight Result according to WorkcenterDesc Type
+```{r}
+dfn_variable  %>% 
+  filter(MIC_Desc == 'Part Weight')  %>%
+ggplot(aes(x=reorder(WorkcenterDesc, Result, median),y=Result)) +
+  geom_boxplot() +
+  coord_flip() +
+  ggtitle("Multiple boxplots of Part Weight Result according to WorkcenterDesc Type") +
+  labs(x="Part Weight", y="WorkcenterDesc Type")
+
+```
+## Pick machine I4 and I7 to study because they have most exceptions.
+### Study Machine I4
+
+
+
