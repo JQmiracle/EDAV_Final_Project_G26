@@ -191,11 +191,20 @@ p11
 ```
 
 ```{r}
-p12 <- ggplot(var4_time, aes(Date, MeanRetDiff)) +  
+p12 <-ggplot(var4_time, aes(Date, MeanRetDiff)) +  
     geom_line(color = "grey30") + geom_point(size = 1) +  
     facet_grid(.~wday(Date, label = TRUE)) +  
     geom_smooth(se = FALSE)
+
+p12
+
 ```
+
+
+
+
+
+
 ```{r}
 var7_time <- dfn_variable7 %>%
   filter(MIC_Desc == 'Part Weight')%>%  
@@ -225,6 +234,8 @@ p14 <- ggplot(var7_time, aes(Date, MeanRetDiff)) +
 
 p14
 ```
+
+
 
 
 
