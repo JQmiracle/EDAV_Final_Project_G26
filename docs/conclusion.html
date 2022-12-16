@@ -82,7 +82,13 @@
 <ul>
 <li class="chapter" data-level="3.1" data-path="data.html"><a href="data.html#sources"><i class="fa fa-check"></i><b>3.1</b> Sources</a></li>
 <li class="chapter" data-level="3.2" data-path="data.html"><a href="data.html#cleaning-transformation"><i class="fa fa-check"></i><b>3.2</b> Cleaning / transformation</a></li>
-<li class="chapter" data-level="3.3" data-path="data.html"><a href="data.html#missing-value-analysis"><i class="fa fa-check"></i><b>3.3</b> Missing value analysis</a></li>
+<li class="chapter" data-level="3.3" data-path="data.html"><a href="data.html#missing-value-analysis"><i class="fa fa-check"></i><b>3.3</b> Missing value analysis</a>
+<ul>
+<li class="chapter" data-level="3.3.1" data-path="data.html"><a href="data.html#check-missing-values-of-variable-data-before-data-cleaning"><i class="fa fa-check"></i><b>3.3.1</b> Check Missing Values of Variable Data before data cleaning</a></li>
+<li class="chapter" data-level="3.3.2" data-path="data.html"><a href="data.html#check-missing-values-of-variable-data-after-data-cleaning"><i class="fa fa-check"></i><b>3.3.2</b> Check Missing Values of Variable Data after data cleaning</a></li>
+<li class="chapter" data-level="3.3.3" data-path="data.html"><a href="data.html#check-missing-values-of-attribute-data-before-data-cleaning"><i class="fa fa-check"></i><b>3.3.3</b> Check Missing Values of Attribute Data before data cleaning</a></li>
+<li class="chapter" data-level="3.3.4" data-path="data.html"><a href="data.html#check-missing-values-of-attribute-data-after-data-cleaning"><i class="fa fa-check"></i><b>3.3.4</b> Check Missing Values of Attribute Data after data cleaning</a></li>
+</ul></li>
 </ul></li>
 <li class="chapter" data-level="4" data-path="results.html"><a href="results.html"><i class="fa fa-check"></i><b>4</b> Results</a>
 <ul>
@@ -101,8 +107,16 @@
 <li class="chapter" data-level="4.6.6" data-path="results.html"><a href="results.html#cleveland-dot-plot-with-multiple-dots"><i class="fa fa-check"></i><b>4.6.6</b> Cleveland dot plot with multiple dots</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="5" data-path="interactive-component.html"><a href="interactive-component.html"><i class="fa fa-check"></i><b>5</b> Interactive component</a></li>
-<li class="chapter" data-level="6" data-path="conclusion.html"><a href="conclusion.html"><i class="fa fa-check"></i><b>6</b> Conclusion</a></li>
+<li class="chapter" data-level="5" data-path="interactive-component.html"><a href="interactive-component.html"><i class="fa fa-check"></i><b>5</b> Interactive component</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="interactive-component.html"><a href="interactive-component.html#new-interactive-features"><i class="fa fa-check"></i><b>5.1</b> New Interactive Features:</a></li>
+<li class="chapter" data-level="5.2" data-path="interactive-component.html"><a href="interactive-component.html#instructions-for-users"><i class="fa fa-check"></i><b>5.2</b> Instructions for users:</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="conclusion.html"><a href="conclusion.html"><i class="fa fa-check"></i><b>6</b> Conclusion</a>
+<ul>
+<li class="chapter" data-level="6.1" data-path="conclusion.html"><a href="conclusion.html#takeaways"><i class="fa fa-check"></i><b>6.1</b> Takeaways</a></li>
+<li class="chapter" data-level="6.2" data-path="conclusion.html"><a href="conclusion.html#limitation-and-further-steps"><i class="fa fa-check"></i><b>6.2</b> Limitation and Further Steps</a></li>
+</ul></li>
 <li class="divider"></li>
 <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
 </ul>
@@ -124,7 +138,14 @@
             <section class="normal" id="section-">
 <div id="conclusion" class="section level1 hasAnchor" number="6">
 <h1><span class="header-section-number">Chapter 6</span> Conclusion<a href="conclusion.html#conclusion" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<div id="takeaways" class="section level2 hasAnchor" number="6.1">
+<h2><span class="header-section-number">6.1</span> Takeaways<a href="conclusion.html#takeaways" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+</div>
+<div id="limitation-and-further-steps" class="section level2 hasAnchor" number="6.2">
+<h2><span class="header-section-number">6.2</span> Limitation and Further Steps<a href="conclusion.html#limitation-and-further-steps" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>There are some limitations of this EDA project. First of all, 3 month data couldn’t reflect the 100% of the real world situation. Especially, after dropping 2% of rows and 2 columns, the dataset lost several important features and information. Thus, we need to collect more data (at least 1 year) for the further analysis. In addition, given that this dataset only contains the rows with the ‘Defects’ items classified mainly by the human beings and there is still some probability of making mistakes incurred by human beings, it would be better to include the rows without ‘Defects’ items which could be used as a another reference for double-checking the human’s classifications using the numeric features. After implementing the recommendations mentioned in the takeways, we could collect the new data and repeat the same visualization procedure to see whether there is some performance improvement on those different machine lines.</p>
 
+</div>
 </div>
             </section>
 

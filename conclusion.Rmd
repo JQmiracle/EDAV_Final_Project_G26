@@ -1,2 +1,17 @@
 # Conclusion
 
+## Takeaways
+
+
+
+
+
+## Limitation and Further Steps
+
+There are some limitations of this EDA project. First of all, 3 month data couldn't reflect the 100% of the real world situation. Especially, after dropping 2% of rows and 2 columns, the dataset lost several important features and information. Thus, we need to collect more data (at least 1 year) for the further analysis. In addition, given that this dataset only contains the rows with the 'Defects' items classified mainly by the human beings and there is still some probability of making mistakes incurred by human beings, it would be better to include the rows without 'Defects' items which could be used as a another reference for double-checking the human's classifications using the numeric features. After implementing the recommendations mentioned in the takeways, we could collect the new data and repeat the same visualization procedure to see whether there is some performance improvement on those different machine lines.
+
+
+
+
+
+

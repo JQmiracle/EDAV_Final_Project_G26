@@ -21,3 +21,14 @@ scatter-plot
 cleveland-dot-plot-with-multiple-dots
 interactive-component
 conclusion
+dfdfdfd
+check-missing-values-of-variable-data-before-data-cleaning
+check-missing-values-of-variable-data-after-data-cleaning
+check-missing-values-of-attribute-data-before-data-cleaning
+check-missing-values-of-attribute-data-after-data-cleaning
+new-interactive-features
+instructions
+instructions-for-users
+d3.js-graph
+takeaways
+limitation-and-further-steps
