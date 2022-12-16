@@ -1,2 +1,33 @@
 # Conclusion
 
+## Takeaways
+
+We were glad to be able to make multiple recommendations for the company’s Quality department based on our exploratory data analysis. We also learned that different graphs can present very diverse information even based on the same data. And we believe the recommendation based on this true and time-effective data can make a valuable impact that helps the company to continuously improve.
+
+**Here is a snap of our recommendations retrieved from section 4:**
+
+- If a machine has more Variable exceptions, it could have more Attribute exceptions potentially. So a red flag should be raised during Quality inspections if any characteristics are running abnormally. 
+
+- The main focus should be on part weight, silicone ratio, visual evaluation, and form, as they are the top two exceptions in Variables and Attributes respectively.
+
+- For machines I9, I3, I4 and I11, the company should focus more on heavy weight issues.
+
+- For machines I6, I5, I13, and I1 the company should focus more on the low weight issues.
+
+- It is important to control and align the data collection methods used by different groups of people, this is in order to make sure the data collected are accurate and reflect consistency.
+
+- For machine I4 We recommend the Quality department pay higher attention on weekends to product and process stability, to avoid quality defects.
+
+- We have made specific Item recommendations for I4 and I7 to look out for weights.
+
+
+
+## Limitation and Further Steps
+
+There are some limitations of this EDA project. First of all, 3 month data couldn't reflect the 100% of the real world situation. Especially, after dropping 2% of rows and 2 columns, the dataset lost several important features and information. Thus, we need to collect more data (at least 1 year) for the further analysis. In addition, given that this dataset only contains the rows with the 'Defects' items classified mainly by the human beings and there is still some probability of making mistakes incurred by human beings, it would be better to include the rows without 'Defects' items which could be used as a another reference for double-checking the human's classifications using the numeric features. After implementing the recommendations mentioned in the takeways, we could collect the new data and repeat the same visualization procedure to see whether there is some performance improvement on those different machine lines.
+
+
+
+
+
+

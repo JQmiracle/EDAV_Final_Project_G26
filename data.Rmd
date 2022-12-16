@@ -71,6 +71,8 @@ dfn_weight <- within(dfn_weight, weight_diff <- (Result - Target)/Target )
 While drawing the missing value graphs, we found that there are three types of missing values in the dataset.In the Attribute data frame, all values in the Target column are NA, because there is not a real target for it. So we choose to fill the column with 0.
 In the Variable data frame, there are some rows without value in Target, those are the characteristics without target value and their appearance is very trivial in the dataset, so we chose to drop those rows. Also, we found the LSL and USL columns have missing values, since we do not study those features, we chose to drop the two columns completely.
 
+### Check Missing Values of Variable Data before data cleaning
+
 ```{r}
 round(colSums(is.na(dfn_variable)) / nrow(dfn_variable) * 100,4)  %>%
   sort(decreasing = TRUE) 
@@ -84,13 +86,14 @@ dfn_variable <- dfn_variable %>% drop_na()
   
 ```
 
-
+### Check Missing Values of Variable Data after data cleaning
 ```{r}
 remotes::install_github("jtr13/redav")
 library(redav)
 plot_missing(dfn_variable, percent = FALSE)
 ```
 
+### Check Missing Values of Attribute Data before data cleaning
 ```{r}
 round(colSums(is.na(dfn_attribute)) / nrow(dfn_attribute) * 100,4)  %>%
   sort(decreasing = TRUE) 
@@ -104,16 +107,8 @@ dfn_attribute <- dfn_attribute %>%
   fill(Target, .direction = 'up')
 ```
 
-```{r}
-dfn_attribute <- dfn_attribute %>%
-  replace(is.na(.), 0)
 
-round(colSums(is.na(dfn_attribute)) / nrow(dfn_attribute) * 100,4)  %>%
-  sort(decreasing = TRUE) 
-```
-
-
-
+### Check Missing Values of Attribute Data after data cleaning
 ```{r}
 remotes::install_github("jtr13/redav")
 library(redav)
