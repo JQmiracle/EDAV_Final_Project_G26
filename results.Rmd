@@ -1,19 +1,5 @@
 # Results
 
-## Required Libraries
-```{r}
-library(dplyr, warn.conflicts = FALSE)
-library(gridExtra, warn.conflicts = FALSE)
-library(ggridges, warn.conflicts = FALSE)
-library(forcats, warn.conflicts = FALSE)
-library(GGally, warn.conflicts = FALSE)
-library(ggplot2)
-library(RColorBrewer)
-library(lubridate)
-library(grid)
-library(lattice)
-```
-
 
 ## Bar Chart for All Machines to identify the top 2 machines with the most defect items
 ```{r}
@@ -34,6 +20,8 @@ p2 <- dfn_attribute%>%
 
 grid.arrange(p1, p2, ncol = 2)
 ```
+
+
 ## Group bar chart to identify the top attribute and varibales Among all machines
 ```{r}
 p3<- dfn_attribute %>%   
@@ -63,6 +51,28 @@ p3
 p4
 ```
 
+## Parallel coordinate plot: count(partweight)  vs count(wall thickness)  vs count(silicone ratio)  + count(all) every line summary
+```{r}
+dfn_p_s <- dfn_variable %>%   
+  filter(MIC_Desc == 'Part Weight' | MIC_Desc == 'Silicone Ratio' )
+
+dfn_v_a <-
+  rbind(dfn_p_s, dfn_attribute)
+
+dfn_v_a %>%  
+  group_by(WorkcenterDesc, MIC_Desc)%>%
+  tally(sort = TRUE)  %>% pivot_wider(names_from = MIC_Desc, values_from = n)%>%   
+  select(c('Part Weight', 'Silicone Ratio', 'Visual Evaluation', 'Form')) %>% 
+  filter (`Silicone Ratio` != 'NA') %>%  
+  ggparcoord(columns = c(3,2,4,5), alphaLines = 1,
+             groupColumn = 1) +
+  geom_vline(xintercept = 1:5, color = "lightblue")+
+  ggtitle('dd')
+```
+
+
+
+
 
 ## Ridgeline plot for part weight exception for each line: use weight difference = (result - target)/target.
 ```{r}
@@ -76,11 +86,9 @@ p5 <- ggplot(dfn_weight, aes(x = weight_diff, y = WorkcenterDesc)) +
 p5
 
 ```
+
 ## Multiple boxplots of Part Weight Result according to WorkcenterDesc Type
 ```{r}
-dfn_variable  %>% 
-  filter(MIC_Desc == 'Part Weight')  
-
 p6 <- dfn_variable  %>% 
   filter(MIC_Desc == 'Part Weight') %>% 
   ggplot(aes(x=reorder(WorkcenterDesc, Result, median),y=Result)) +
@@ -91,10 +99,6 @@ p6 <- dfn_variable  %>%
 
 p6
 ```
-
-## Parallel coordinate plot: count(partweight)  vs count(wall thickness)  vs count(silicone ratio)  + count(all) every line summary
-
-
 
 
 
@@ -109,8 +113,6 @@ p6
 ## Pick machine I4 and I7 to study because they have most exceptions.
 
 ### Study Machine I4
-
-
 
 ```{r}
 dfn_attribute4 <- dplyr::filter(dfn_attribute, WorkcenterDesc=="I4") #filter by machine I4
@@ -236,7 +238,98 @@ p14
 ```
 
 
+### Heatmap
+```{r}
+dfn_variable7 <- within(dfn_variable7, result_diff <- (Result - Target)/Target )
+dfn_variable7 <- dplyr::filter(dfn_variable7, MIC_Desc!="Silicone Application Check")
+dfn_variable7 <- dplyr::filter(dfn_variable7, Material_Code!="51800B75")
+dfn_variable7w <- dplyr::filter(dfn_variable7, MIC_Desc=="Part Weight")
 
+ggplot(dfn_variable7w, aes(MIC_Desc,Material_Code)) +
+  geom_tile(aes(fill = result_diff)) +
+  facet_wrap(~InspectionPlan)
+
+
+dfn_variable4 <- within(dfn_variable4, result_diff <- (Result - Target)/Target )
+dfn_variable4w <- dplyr::filter(dfn_variable4, MIC_Desc=="Part Weight")
+ggplot(dfn_variable4w, aes(MIC_Desc,Material_Code)) +
+  geom_tile(aes(fill = result_diff))+
+  facet_wrap(~InspectionPlan)
+
+
+ggplot(dfn_variable7, aes(MIC_Desc,Material_Code)) +
+  geom_tile(aes(fill = result_diff))+
+  scale_fill_viridis_c(direction=1)
+
+
+ggplot(dfn_variable4, aes(MIC_Desc,Material_Code)) +
+  geom_tile(aes(fill = result_diff))+
+  scale_fill_viridis_c(direction=1)
+
+```
+
+### Scatter Plot
+
+```{r}
+dfn_variable <- within(dfn_variable, date <- as.Date(PostingDate,'%m/%d/%Y'))
+dfn_variable <- within(dfn_variable, result_diff <- (Result - Target)/Target)
+dfn_variable47 <- dplyr::filter(dfn_variable, WorkcenterDesc =="I4"|WorkcenterDesc =="I7")
+tidy_dfn_variable <- pivot_wider(dfn_variable47, names_from = MIC_Desc, values_from = result_diff)[ , c("WorkcenterDesc","date","Part Weight","Silicone Ratio")]
+colnames(tidy_dfn_variable)[3] ="weight"
+colnames(tidy_dfn_variable)[4] ="silicone"
+
+weight_silicone <- tidy_dfn_variable %>% 
+  group_by(WorkcenterDesc,date) %>% 
+  summarise(.,weight= mean(weight,na.rm= TRUE),
+            silicone = mean(silicone,na.rm=TRUE))
+weight_silicone <- within(weight_silicone, month <- months(date))
+weight_silicone <- dplyr::filter(weight_silicone, month!="December")
+weight_silicone
+ggplot(weight_silicone, aes(weight, silicone, color = month)) + 
+  geom_point() +
+  facet_wrap(~WorkcenterDesc)+
+  labs(x = "Part Weight", y = "Silicone Ratio") +
+  ggtitle("Machine I4 and I7 Scatter Plot by Part Weight and Silicone Ratio")
+
+```
+
+
+### Cleveland dot plot with multiple dots
+```{r}
+dfn_variable4 %>%
+  filter(MIC_Desc == 'Part Weight')%>%  
+  mutate(Date = as.Date(PostingDate, "%m/%d/%Y"))%>%  
+  mutate(ResultDiff = (Result - Target)/Target)%>%
+  mutate(month = months(Date))%>%
+  filter(month != 'December')%>%
+  group_by(Material_Desc, month)%>%
+  summarize(MeanRetDiff = mean(ResultDiff))%>%
+ggplot(aes(x = MeanRetDiff, y =   fct_reorder2(Material_Desc, month == 'September', MeanRetDiff,.desc=FALSE), color = month)) +
+
+  geom_point()+
+  ggtitle("by item") +
+  ylab("") +
+  theme_linedraw()
+```
+
+
+
+```{r}
+dfn_variable7 %>%
+  filter(MIC_Desc == 'Part Weight')%>%  
+  mutate(Date = as.Date(PostingDate, "%m/%d/%Y"))%>%  
+  mutate(ResultDiff = (Result - Target)/Target)%>%
+  mutate(month = months(Date))%>%
+  filter(month != 'December')%>%
+  group_by(Material_Desc, month)%>%
+  summarize(MeanRetDiff = mean(ResultDiff))%>%
+ggplot(aes(x = MeanRetDiff, y =   fct_reorder2(Material_Desc, month == 'September', MeanRetDiff,.desc=FALSE), color = month)) +
+
+  geom_point()+
+  ggtitle("by item") +
+  ylab("") +
+  theme_linedraw()
+```
 
 
 
