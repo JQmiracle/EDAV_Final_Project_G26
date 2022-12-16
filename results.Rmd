@@ -8,19 +8,19 @@ p1 <- dfn_variable%>%
   tally()  %>% 
   ggplot(aes(x = fct_reorder(WorkcenterDesc, n, .desc = TRUE), y = n))+
   geom_bar(stat="identity")+
-  labs(x = "WorkcenterDesc", y = "Freq", title = "Variables")
+  labs(x = "Machine", y = "Freq", title = "Variable Exception Frequency by Machine")
 
 p2 <- dfn_attribute%>%   
   group_by(WorkcenterDesc) %>% 
   tally()  %>% 
   ggplot(aes(x = fct_reorder(WorkcenterDesc, n, .desc = TRUE), y = n))+
   geom_bar(stat="identity")+
-  labs(x = "WorkcenterDesc", y = "Freq", title = "Attributes")
+  labs(x = "Machine", y = "Freq", title = "Attribute Exception Frequency by Machine")
 
 
 grid.arrange(p1, p2, ncol = 2)
 ```
-
+Since there are thirteen machines in the factory, we are interested in checking if there is distribution difference of Exception data among them. Meaning that if there are some machines that have apparently more exceptions than the others. From the histograms above, we found that machine I4 and machine I7 are the two machines that have the most Exception frequency for both Variables and Attributes characteristics. So we will further study those machines in depth later. It also gives us a rough idea that there might be correlation between Variable and Attribute exception performances, which means if a machine has more Variable exception, it could have more Attribute exception potentially. We will study that later as well. 
 
 ## Group bar chart to identify the top attribute and varibales Among all machines
 ```{r}
@@ -31,7 +31,7 @@ p3<- dfn_attribute %>%
   mutate(Proportion = `n` / sum(n)) %>% 
   ggplot(aes(x = fct_reorder2(WorkcenterDesc, MIC_Desc, Proportion, .desc = FALSE), y = Proportion, fill = MIC_Desc))+
   geom_bar(position="fill", stat="identity")+
-    labs(x = "WorkcenterDesc", y = "Proportion", title = "Top Attribute for each machine")+
+    labs(x = "Machine", y = "Proportion", title = "Top Attribute Exceptions for each machine")+
     coord_flip()+
 scale_fill_brewer(palette="Paired")
 
@@ -43,15 +43,18 @@ p4<-dfn_variable %>%
   mutate(Proportion = `n` / sum(n)) %>% 
   ggplot(aes(x = fct_reorder2(WorkcenterDesc, MIC_Desc, Proportion, .desc = TRUE), y = Proportion, fill = MIC_Desc))+
   geom_bar(position="fill", stat="identity")+
-    labs(x = "WorkcenterDesc", y = "Proportion", title = "Top Variables for each machine")+
+    labs(x = "Machine", y = "Proportion", title = "Top Variable Exceptions for each machine")+
     coord_flip()+
 scale_fill_brewer(palette="Paired")
 
 p3
 p4
 ```
+In a general review of Attribute and Variable data by machine, we found that Visual Evaluation and Form are the major Attribute exceptions for most of the machines except for I1. They take up at least 60% of the Attributes exceptions. This is a good information for the company to assign attention and resources based on the category of defects. For example, in order to address the Visual Evaluation exceptions, it may be good to focus on the quality of raw materials used in production. 
 
-## Parallel coordinate plot: count(partweight)  vs count(wall thickness)  vs count(silicone ratio)  + count(all) every line summary
+Part Weight is the most significant Variable exception for all machines, with Silicone Ratio being the secondary. In the following sections, we will put Part Weight and Silicone Ratio as key focuses to study. 
+
+## Parallel coordinate plot: 
 ```{r}
 dfn_p_s <- dfn_variable %>%   
   filter(MIC_Desc == 'Part Weight' | MIC_Desc == 'Silicone Ratio' )
@@ -67,25 +70,17 @@ dfn_v_a %>%
   ggparcoord(columns = c(3,2,4,5), alphaLines = 1,
              groupColumn = 1) +
   geom_vline(xintercept = 1:5, color = "lightblue")+
-  ggtitle('dd')
+  ggtitle('Parallel Coordinate Plot for Characteristics by Machine ')
 ```
+Remember we found the in the beginning that Variable and Attribute Exceptions may have correlations between each other. So we picked the top two Variable and Attribute Characteristics to plot the Parallel Coordinate Plot based on the incident count of each of them by machine.  
+We found that Part Weight have positive correlation with Visual Evaluation.
+Visual Evaluation have positive correlation with Form. 
+Silicone do not have strong relationship with other characteristics.
 
+This tells us that there are strong correlation between the top two Attribute Exceptions themselves. And Part Weight, the most significant Variable Exception, has strong correlation with the top Attribute Exception - Visual Evaluation. So it validates our assumption.
 
+That means, if there is a unstable process in any machine, it is likely that it will affect multiple characteristics of the item in a negative way. So a red flag should be raised during Quality inspections that if one of the above characteristics is in exception, the others should be carefully checked as well. 
 
-
-
-## Ridgeline plot for part weight exception for each line: use weight difference = (result - target)/target.
-```{r}
-dfn_weight <- dplyr::filter(dfn_variable, MIC_Desc =="Part Weight")
-dfn_weight <- within(dfn_weight, weight_diff <- (Result - Target)/Target )
-p5 <- ggplot(dfn_weight, aes(x = weight_diff, y = WorkcenterDesc)) +
-  geom_density_ridges(fill = "blue") +
-  ggtitle("Part Weight Result") +
-  ylab("Machine")
-
-p5
-
-```
 
 ## Multiple boxplots of Part Weight Result according to WorkcenterDesc Type
 ```{r}
@@ -94,149 +89,32 @@ p6 <- dfn_variable  %>%
   ggplot(aes(x=reorder(WorkcenterDesc, Result, median),y=Result)) +
   geom_boxplot() +
   coord_flip() +
-  ggtitle("Multiple boxplots of Part Weight Result according to WorkcenterDesc Type") +
-  labs(x="Part Weight", y="WorkcenterDesc Type")
+  ggtitle("Multiple boxplots of Part Weight Result according to Machine") +
+  labs(x="Machine", y="Part Weight")
 
 p6
 ```
+From the Box plots of the part weight data by machine above, we found that there are some machines that run a wider range of part weights. For example, machine I5 and I8. That means the items run on those machines can be varied from small to large sizes. In the opposite, some machines like I9 and I2 run smaller scale of items which have closer weights. 
 
+This plot also tells us it is important to study the Part weight difference ratio from target, which eliminates the impact of the original small or large part weight of the items themselves. And focus on the difference of the part weight with their target to study the level of out-of-range. 
 
+## Ridgeline plot for part weight exception for each line: use weight difference = (result - target)/target.
+```{r}
+dfn_weight <- dplyr::filter(dfn_variable, MIC_Desc =="Part Weight")
+dfn_weight <- within(dfn_weight, weight_diff <- (Result - Target)/Target )
+p5 <- ggplot(dfn_weight, aes(x = weight_diff, y = WorkcenterDesc)) +
+  geom_density_ridges(fill = "blue") +
+  ggtitle("Part Weight Result Difference Ratio from Target by Machine") +
+  ylab("Machine")
 
+p5
 
-
-
-
-
-
+```
+In order to study the difference ratio of Part Weight from Target, we define it by the equation (Result - Target)/Target, and plot that result using the ridge line plot by machine. The Plot above tells us I9 has more out of range Part Weight on the upper side, meaning that they run more over weight. Which is not cost effective to the company. And machine I6, I5, I13, I1 tend to run out of range on the lower bound. So it is important to pay attention to those lines that the quality of products are not compromised because of the low weight. 
 
 
 ## Pick machine I4 and I7 to study because they have most exceptions.
-
-### Study Machine I4
-
-```{r}
-dfn_attribute4 <- dplyr::filter(dfn_attribute, WorkcenterDesc=="I4") #filter by machine I4
-dfn_variable4 <- dplyr::filter(dfn_variable, WorkcenterDesc=="I4") #filter by machine I4
-
-p7 <- dfn_variable4%>%   
-  group_by(MIC_Desc) %>% 
-  tally()  %>% 
-  ggplot(aes(x = fct_reorder(MIC_Desc, n, .desc = FALSE), y = n))+
-  geom_bar(stat="identity")+
-  labs(x = "MIC_Desc", y = "Freq", title = "Variables")+
-  coord_flip()
-
-p8 <- dfn_attribute4%>%   
-  group_by(MIC_Desc) %>% 
-  tally()  %>% 
-  ggplot(aes(x = fct_reorder(MIC_Desc, n, .desc = FALSE), y = n))+
-  geom_bar(stat="identity")+
-  labs(x = "MIC_Desc", y = "Freq", title = "Attributes")+
-  coord_flip()
-
-
-grid.arrange(p7, p8, nrow = 2)
-```
-
-
-### Study Machine I7
-
-```{r}
-dfn_attribute7 <- dplyr::filter(dfn_attribute, WorkcenterDesc=="I7") #filter by machine I7
-dfn_variable7 <- dplyr::filter(dfn_variable, WorkcenterDesc=="I7") #filter by machine I7
-
-p9 <- dfn_variable7%>%   
-  group_by(MIC_Desc) %>% 
-  tally()  %>% 
-  ggplot(aes(x = fct_reorder(MIC_Desc, n, .desc = FALSE), y = n))+
-  geom_bar(stat="identity")+
-  labs(x = "MIC_Desc", y = "Freq", title = "Variables")+
-  coord_flip()
-
-p10 <- dfn_attribute7%>%   
-  group_by(MIC_Desc) %>% 
-  tally()  %>% 
-  ggplot(aes(x = fct_reorder(MIC_Desc, n, .desc = FALSE), y = n))+
-  geom_bar(stat="identity")+
-  labs(x = "MIC_Desc", y = "Freq", title = "Attributes")+
-  coord_flip()
-
-
-grid.arrange(p9, p10, nrow = 2)
-```
-
-
-
-
-### Time series plot of attribute exception throughout the 3 months. For I4 and I7 repectively.  (overall + by week) 
-
-```{r}
-var4_time <- dfn_variable4 %>%
-  filter(MIC_Desc == 'Part Weight')%>%  
-  mutate(Date = as.Date(PostingDate, "%m/%d/%Y"))%>%  
-  mutate(ResultDiff = (Result - Target)/Target)%>%
-  group_by(Date)%>%
-  summarize(MeanRetDiff = mean(ResultDiff))
-
-
-g <- ggplot(var4_time,aes(Date, MeanRetDiff)) +
-  geom_line(alpha = 1) +
-  ggtitle("Part Weight of I4") +  labs (x = "Date", y = "Result") +
-  theme_grey(16) +
-  theme(legend.title = element_blank())
-
-weekend <- var4_time %>% filter(wday(Date) == 6) 
-
-p11 <- g+geom_point(data = weekend, aes(Date, MeanRetDiff), color = "deeppink")
-
-p11
-```
-
-```{r}
-p12 <-ggplot(var4_time, aes(Date, MeanRetDiff)) +  
-    geom_line(color = "grey30") + geom_point(size = 1) +  
-    facet_grid(.~wday(Date, label = TRUE)) +  
-    geom_smooth(se = FALSE)
-
-p12
-
-```
-
-
-
-
-
-
-```{r}
-var7_time <- dfn_variable7 %>%
-  filter(MIC_Desc == 'Part Weight')%>%  
-  mutate(Date = as.Date(PostingDate, "%m/%d/%Y"))%>%  
-  mutate(ResultDiff = (Result - Target)/Target)%>%
-  group_by(Date)%>%
-  summarize(MeanRetDiff = mean(ResultDiff))
-
-
-g <- ggplot(var7_time,aes(Date, MeanRetDiff)) +
-  geom_line(alpha = 1) +
-  ggtitle("Part Weight of I7") +  labs (x = "Date", y = "Result") +
-  theme_grey(16) +
-  theme(legend.title = element_blank())
-
-weekend <- var7_time %>% filter(wday(Date) == 6 ) 
-
-p13 <- g+geom_point(data = weekend, aes(Date, MeanRetDiff), color = "deeppink")
-p13
-```
-
-```{r}
-p14 <- ggplot(var7_time, aes(Date, MeanRetDiff)) +  
-    geom_line(color = "grey30") + geom_point(size = 1) +  
-    facet_grid(.~wday(Date, label = TRUE)) +  
-    geom_smooth(se = FALSE)
-
-p14
-```
-
+Next, after we study the different patterns on all machines, we would like to take the two machines that we picked in the beginning, I4 and I7, to deep dive into them and find out more valuable information.
 
 ### Heatmap
 ```{r}
@@ -247,6 +125,7 @@ dfn_variable7w <- dplyr::filter(dfn_variable7, MIC_Desc=="Part Weight")
 
 ggplot(dfn_variable7w, aes(MIC_Desc,Material_Code)) +
   geom_tile(aes(fill = result_diff)) +
+  ggtitle("Heatmap for I7 Part Weight Group by Inspection Type") +  labs (y = "Item Number") +
   facet_wrap(~InspectionPlan)
 
 
@@ -254,19 +133,26 @@ dfn_variable4 <- within(dfn_variable4, result_diff <- (Result - Target)/Target )
 dfn_variable4w <- dplyr::filter(dfn_variable4, MIC_Desc=="Part Weight")
 ggplot(dfn_variable4w, aes(MIC_Desc,Material_Code)) +
   geom_tile(aes(fill = result_diff))+
+  ggtitle("Heatmap for I4 Part Weight Group by Inspection Type") +  labs (y = "Item Number") +
   facet_wrap(~InspectionPlan)
 
 
 ggplot(dfn_variable7, aes(MIC_Desc,Material_Code)) +
   geom_tile(aes(fill = result_diff))+
+  ggtitle("Heatmap for I7 Variable Characteristics") +  labs (y = "Item Number") +
   scale_fill_viridis_c(direction=1)
 
 
 ggplot(dfn_variable4, aes(MIC_Desc,Material_Code)) +
   geom_tile(aes(fill = result_diff))+
+  ggtitle("Heatmap for I4 Variable Characteristics") +  labs (y = "Item Number") +
   scale_fill_viridis_c(direction=1)
 
 ```
+There are three different types of inspection, which are inspections conducted by different group of people.
+We would like to use heatmaps to find out relationship of inspections conducted by different people. The first two graphs represents that relationship of two machines I7 and I4. As shown in the heat map, the part weight collected by different group of people for the same item do not show exact same pattern. They are somewhat similar on color, however, not all items are perfectly the same. Our recommendation for this is to control and align the data collection methods used by different groups of people, in order to make sure data collected are accurate and reflect consistence. 
+
+The third and fourth graphs are to examine the relationship among Variable Exceptions for I7 and I4, where we do not find very similar patterns among those different Variable characteristics. 
 
 ### Scatter Plot
 
@@ -284,7 +170,6 @@ weight_silicone <- tidy_dfn_variable %>%
             silicone = mean(silicone,na.rm=TRUE))
 weight_silicone <- within(weight_silicone, month <- months(date))
 weight_silicone <- dplyr::filter(weight_silicone, month!="December")
-weight_silicone
 ggplot(weight_silicone, aes(weight, silicone, color = month)) + 
   geom_point() +
   facet_wrap(~WorkcenterDesc)+
@@ -292,6 +177,81 @@ ggplot(weight_silicone, aes(weight, silicone, color = month)) +
   ggtitle("Machine I4 and I7 Scatter Plot by Part Weight and Silicone Ratio")
 
 ```
+
+In order to further study if there is relationship between Part Weight and Silicone Ratio for I4 and I7, we used scatter plots. On I4 there is a weak positive correlation between, however I7 has no strong relationship. This shows that part weight and silicone ratio are not correlated to each other, though they are the top two Variable exceptions. 
+
+
+### Time series plot of attribute exception throughout the 3 months. For I4 and I7 repectively.  (overall + by week) 
+
+```{r}
+var4_time <- dfn_variable4 %>%
+  filter(MIC_Desc == 'Part Weight')%>%  
+  mutate(Date = as.Date(PostingDate, "%m/%d/%Y"))%>%  
+  mutate(ResultDiff = (Result - Target)/Target)%>%
+  group_by(Date)%>%
+  summarize(MeanRetDiff = mean(ResultDiff))
+
+
+g <- ggplot(var4_time,aes(Date, MeanRetDiff)) +
+  geom_line(alpha = 1) +
+  ggtitle("Part Weight Diff Ratio of I4") +  labs (x = "Date", y = "Result") +
+  theme_grey(16) +
+  theme(legend.title = element_blank())
+
+weekend <- var4_time %>% filter(wday(Date) == 6) 
+
+p11 <- g+geom_point(data = weekend, aes(Date, MeanRetDiff), color = "deeppink")
+
+p11
+```
+
+```{r}
+p12 <-ggplot(var4_time, aes(Date, MeanRetDiff)) +  
+    geom_line(color = "grey30") + geom_point(size = 1) +  
+    ggtitle("Part Weight Diff Ratio of I4") +  labs (x = "Date", y = "Result") +
+    facet_grid(.~wday(Date, label = TRUE)) +  
+    geom_smooth(se = FALSE)
+
+p12
+
+```
+
+Next we would like to study if time has any impact on product performance. So we use time series plot to explore if pattern exists. For machine I4, the first graph is an overview of three month time series. We mark out the weekends with red dot. To see if the more fluctuation exist on weekends comparing to weekdays. The first plot does show the red dots fall on high or low peaks, which validate our assumption. The second graph group the data by days in week and we observe on Saturday, there are more extreme values and wider range. This shows us on machine I4, due to people resource limitation on weekends, the weight exception is more extreme than other days. We recommend the Quality department to pay higher attention on weekends on product and process stability, to avoid quality defects.
+
+
+
+
+```{r}
+var7_time <- dfn_variable7 %>%
+  filter(MIC_Desc == 'Part Weight')%>%  
+  mutate(Date = as.Date(PostingDate, "%m/%d/%Y"))%>%  
+  mutate(ResultDiff = (Result - Target)/Target)%>%
+  group_by(Date)%>%
+  summarize(MeanRetDiff = mean(ResultDiff))
+
+
+g <- ggplot(var7_time,aes(Date, MeanRetDiff)) +
+  geom_line(alpha = 1) +
+  ggtitle("Part Weight Diff Ratio of I7") +  labs (x = "Date", y = "Result") +
+  theme_grey(16) +
+  theme(legend.title = element_blank())
+
+weekend <- var7_time %>% filter(wday(Date) == 6 ) 
+
+p13 <- g+geom_point(data = weekend, aes(Date, MeanRetDiff), color = "deeppink")
+p13
+```
+
+```{r}
+p14 <- ggplot(var7_time, aes(Date, MeanRetDiff)) +  
+    geom_line(color = "grey30") + geom_point(size = 1) +
+    ggtitle("Part Weight Diff Ratio of I7") +  labs (x = "Date", y = "Result") +
+    facet_grid(.~wday(Date, label = TRUE)) +  
+    geom_smooth(se = FALSE)
+
+p14
+```
+We used the same idea to study weekend performance for machine I7, it does not show the same conclusion as machine I4. So that means the people factor is less affected by the day in week on I7.
 
 
 ### Cleveland dot plot with multiple dots
@@ -307,11 +267,11 @@ dfn_variable4 %>%
 ggplot(aes(x = MeanRetDiff, y =   fct_reorder2(Material_Desc, month == 'September', MeanRetDiff,.desc=FALSE), color = month)) +
 
   geom_point()+
-  ggtitle("by item") +
+  ggtitle("Part Weight Diff Ratio for I4 by Item") +
   ylab("") +
   theme_linedraw()
 ```
-
+To further dive into to the Part Weight performance for I4, we used Cleveland dot plot to draw the rank of each item run on this machine by Part Weight difference ratio. Based on this graph, we recommend red flagging the top 7 items and low 6 items in the graph on part weight control in order to achieve better part weight performance for the machine overall. 
 
 
 ```{r}
@@ -326,11 +286,10 @@ dfn_variable7 %>%
 ggplot(aes(x = MeanRetDiff, y =   fct_reorder2(Material_Desc, month == 'September', MeanRetDiff,.desc=FALSE), color = month)) +
 
   geom_point()+
-  ggtitle("by item") +
+  ggtitle("Part Weight Diff Ratio for I4 by Item") +
   ylab("") +
   theme_linedraw()
 ```
+Use the same logic as above and based on this graph, we recommend red flagging the top 8 items and low 7 items in the graph on part weight control in order to achieve better part weight performance for machine I7 overall. 
 
-
-
-
+Also in the above two graphs, we see that for items that show up in more than two months, the weight of them tend to increase by time, which shows it could potentially be affected by the tool of the item being fatigue and require maintenance over time. 
