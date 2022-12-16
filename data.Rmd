@@ -92,6 +92,7 @@ remotes::install_github("jtr13/redav")
 library(redav)
 plot_missing(dfn_variable, percent = FALSE)
 ```
+
 ### Check Missing Values of Attribute Data before data cleaning
 ```{r}
 round(colSums(is.na(dfn_attribute)) / nrow(dfn_attribute) * 100,4)  %>%
