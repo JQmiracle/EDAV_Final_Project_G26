@@ -6,4 +6,4 @@ site: bookdown::bookdown_site
 ---
 
 # Introduction
-
+In the food packaging manufacturing industry, there are tens of thousands of pounds of finished good rejected due to quality defect in a single manufacturing plant every day. In the meantime, there are thousands of quality inspection data points generated in a single plant each day. If those data are simply collected but not analyzed, they have no value on process improvement or efficiency enhancement. We would like to study a real-world manufacturing data set based on this motivation, to provide a value-added recommendation based of our knowledge of Exploratory Data Analysis. 
